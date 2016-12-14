@@ -214,11 +214,18 @@ function matchTagNameToNotation(node) {
             case 'font':
                 //Currently only color is supported in the RichText Dialog box
                 var color = node.color;
-                output = "<w:color  w:val=\"" + color + "\"/>";
+                if (color != null && color != '') {
+                    output = "<w:color  w:val=\"" + color + "\"/>";
+                }
                 break;
             case 'img':
                 console.log("Got img component");
-                output = "";
+                var src = node.src;
+                if (src != null && src != '') {
+                    output += "<pic:blipFill>";
+                    output += "<a:blip cstate=\"print\" link=\"" + src + "\"/>";
+                    output += "</pic:blipFill>";
+                }
                 break;
             default:
                 output = "";
