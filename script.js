@@ -7,7 +7,7 @@ function testrun() {
 //     var text = "<p>Welcome<h1>Testing</h1></p>";
 //     var text = "<h1 style=\"text-align: center;\"><b><font color=\"OrangeRed\">Welcome</font> </b></h1><h2><b><i>Ke</i></b><i>nn</i><b><i>y</i></b></h2><p>Align to left</p><p style=\"text-align: right;\">align to right</p><p style=\"text-align: center;\">align to center</p>\"";
 // var text = "<a href=\"http://www.google.com\" target=\"\">http://www.google.com</a>";
-var text = "<ul><li>a</li><li>b</li><li>c</li></ul>";
+var text = "<ul><li><b>a</b></li><li>b</li><li>c</li></ul>";
     var output = "";
 
     var doc = new DOMParser().parseFromString(text, "text/html");
