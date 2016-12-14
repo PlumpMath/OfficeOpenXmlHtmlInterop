@@ -58,8 +58,12 @@ function matchList(node){
     pretag += "</w:pPr>";
 
     if (node.childNodes.length > 0){
-        console.log("Traverse To Li Component");
-        output += traverseInnerNode([pretag], node);
+        var listNodes = node.childNodes;
+        for (var i=0; i<listNodes.length; i++){
+            console.log("Traverse To Li Component");
+            output += traverseInnerNode([pretag], listNodes[i]);
+        }
+
     }
 
     output += "</w:p>";
