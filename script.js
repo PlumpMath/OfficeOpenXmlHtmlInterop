@@ -26,7 +26,7 @@ var text = "<ul><li>a</li><li>b</li><li>c</li></ul>";
         var node = bodyNode[0].childNodes[i];
         console.log("Node", i, ":", node.nodeName);
 
-        if (node.nodeName.toLowerCase() == 'ul'){
+        if (node.nodeName.toLowerCase() == 'ul' || node.nodeName.toLowerCase() == 'ol') {
             output += matchList(node);
         }
         else {
@@ -35,7 +35,7 @@ var text = "<ul><li>a</li><li>b</li><li>c</li></ul>";
 
             //does this node has child?
             if (node.childNodes.length > 0) {
-                console.log("This node has Child Node")
+                console.log("This node has Child Node");
                 output += traverseInnerNode([], node);
             } else {
                 console.log("This node does not have Child Node");
@@ -49,27 +49,42 @@ var text = "<ul><li>a</li><li>b</li><li>c</li></ul>";
 
 //cater the case when it's order list / unordered list
 function matchList(node){
-    var pretag = '';
 
-    var output = "";
-    output += "<w:p>";
+    var output = '';
+
+    var pretag = '';
     pretag += "<w:pPr w:val=\"ListParagraph\">";
-    pretag += " <w:numPr> <w:ilvl w:val=\"0\"/> <w:numId w:val=\"1\"/> </w:numPr> ";
+
+    //Handling the difference between ul and ol
+    if (node.nodeName.toLowerCase() == 'ul') {
+        pretag += " <w:numPr> <w:ilvl w:val=\"0\"/> <w:numId w:val=\"1\"/> </w:numPr> ";
+    } else if (node.nodeName.toLowerCase() == 'ol') {
+        pretag += " <w:numPr> <w:ilvl w:val=\"0\"/> <w:numId w:val=\"2\"/> </w:numPr> ";
+    }
+
     pretag += "</w:pPr>";
 
     if (node.childNodes.length > 0){
         var listNodes = node.childNodes;
+
         for (var i=0; i<listNodes.length; i++){
+
             console.log("Traverse To Li Component");
-            output += traverseInnerNode([pretag], listNodes[i]);
-        }
+            var listOutput = '';
+            listOutput += "<w:p>";
+            listOutput += pretag;
+            listOutput += traverseInnerNode([], listNodes[i]);
+            listOutput += "</w:p>";
 
-    }
+            output += listOutput;
+        } //end of for-loop
 
-    output += "</w:p>";
+    } //end of if
+
     return output;
 
 }
+
 
 function traverseInnerNode(outerTagHierarchy, node) {
     var tagHierarchy = outerTagHierarchy;
@@ -89,7 +104,6 @@ function traverseInnerNode(outerTagHierarchy, node) {
 
         } else {
 
-            //Todo: Get the loop of tag hierarchy out and append it to innerTag
             var accumulatedTags = '';
             while (tagHierarchy.length) {
                 accumulatedTags += tagHierarchy.pop();
@@ -117,11 +131,6 @@ function printOutput(innerTag, node) {
        hyperlink += "</w:hyperlink>";
        output += hyperlink;
     }
-
-    // else if (node.parentNode.nodeName.toLowerCase() == 'li'){
-    //     output += innerTag
-    // }
-
     //the normal case
     else{
 
@@ -160,13 +169,13 @@ function matchParagraphStyling(node) {
     if (tagName != null) {
         switch (tagName.toLowerCase()) {
             case 'h1':
-                paragraphStyle += "<w:pStyle w:val=\"Heading1\"/>"
+                paragraphStyle += "<w:pStyle w:val=\"Heading1\"/>";
                 if (node.style != null && node.style.textAlign != null && node.style.textAlign != '') {
                     paragraphStyle += "<w:jc w:val=\"" + node.style.textAlign + "\"/>";
                 }
                 break;
             case 'h2':
-                paragraphStyle += "<w:pStyle w:val=\"Heading2\"/>"
+                paragraphStyle += "<w:pStyle w:val=\"Heading2\"/>";
                 if (node.style != null && node.style.textAlign != null && node.style.textAlign != '') {
                     paragraphStyle += "<w:jc w:val=\"" + node.style.textAlign + "\"/>";
                 }
@@ -205,7 +214,7 @@ function matchTagNameToNotation(node) {
             case 'font':
                 //Currently only color is supported in the RichText Dialog box
                 var color = node.color;
-                output = "<w:color  w:val=\"" + color + "\"/>"
+                output = "<w:color  w:val=\"" + color + "\"/>";
                 break;
             case 'img':
                 console.log("Got img component");
